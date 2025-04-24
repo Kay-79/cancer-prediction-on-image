@@ -1,2 +1,5 @@
 .venv/
-archive/
+breast/
+lung/
+*.npy
+*.png
