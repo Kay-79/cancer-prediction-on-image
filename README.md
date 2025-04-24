@@ -1,1 +1,1 @@
-# lung-cancer-prediction-image
+# cancer-prediction-on-image
