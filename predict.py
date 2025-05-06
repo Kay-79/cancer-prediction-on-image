@@ -55,13 +55,15 @@ def predict_and_plot(model_path, image_path, class_dict):
 
 def evaluate_and_plot(model_path, folder_path, class_dict):
     """
-    Evaluate predictions for all images in a folder, display predictions, and show a bar chart.
+    Evaluate predictions for all images in a folder, display predictions, and show bar charts for predictions and accuracy.
     """
     # Load the trained model
     model = keras.models.load_model(model_path)
 
-    # Initialize counters for predictions
+    # Initialize counters for predictions and accuracy
     predictions_count = {label: 0 for label in class_dict.values()}
+    correct_predictions = 0
+    total_predictions = 0
 
     # Prepare to display images and predictions
     image_paths = glob(os.path.join(folder_path, "*.png"))
@@ -83,8 +85,14 @@ def evaluate_and_plot(model_path, folder_path, class_dict):
         confidence = prediction[0][predicted_class]
         predictions_count[class_dict[predicted_class]] += 1
 
-        # Extract the last 6 characters of the filename
+        # Extract the last 10 characters of the filename
         filename_suffix = os.path.basename(image_path)[-10:]
+
+        # Check if the prediction matches the ground truth from the filename
+        ground_truth = 1 if "class1" in filename_suffix else 0
+        if predicted_class == ground_truth:
+            correct_predictions += 1
+        total_predictions += 1
 
         # Display the image and prediction
         plt.subplot(rows, cols, idx + 1)
@@ -95,7 +103,7 @@ def evaluate_and_plot(model_path, folder_path, class_dict):
     plt.tight_layout()
     plt.show()
 
-    # Plot the bar chart
+    # Plot the bar chart for predictions
     plt.figure(figsize=(8, 5))
     plt.bar(predictions_count.keys(), predictions_count.values(), color=['blue', 'orange'])
     plt.title("Prediction Distribution")
@@ -103,9 +111,16 @@ def evaluate_and_plot(model_path, folder_path, class_dict):
     plt.ylabel("Count")
     plt.show()
 
+    # Calculate and display accuracy
+    accuracy = (correct_predictions / total_predictions) * 100
+    plt.figure(figsize=(5, 5))
+    plt.bar(["Accuracy"], [accuracy], color='green')
+    plt.title(f"Model Accuracy: {accuracy:.2f}%")
+    plt.ylabel("Percentage")
+    plt.show()
+
 # Example usage:
 model_path = 'model.h5'
-# image_path = '16534_idx5_x151_y101_class1.png'
 test_folder_path = 'test'  # Folder containing test images
 
 dict_characters = {
@@ -113,5 +128,4 @@ dict_characters = {
     1: 'IDC+',
 }
 
-# predict_and_plot(model_path, image_path, dict_characters)
 evaluate_and_plot(model_path, test_folder_path, dict_characters)
