@@ -121,7 +121,7 @@ def evaluate_and_plot(model_path, folder_path, class_dict):
 
 # Example usage:
 model_path = 'model.h5'
-test_folder_path = 'test'  # Folder containing test images
+test_folder_path = 'predictImages'
 
 dict_characters = {
     0: 'IDC-',
